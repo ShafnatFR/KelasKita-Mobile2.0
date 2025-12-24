@@ -23,7 +23,7 @@ class CategoriesPage extends StatelessWidget {
         currentIndex: 1, // Index Explore/Categories
         themeNotifier: themeNotifier, // Kirim notifier ke navbar
         onTap: (i) {
-          if (i == 1) return; // Sudah di halaman ini
+          if (i == 0) return; // Sudah di halaman ini
 
           Widget nextPage;
           if (i == 0) {
