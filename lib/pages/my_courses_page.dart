@@ -1,30 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:kelaskita_mobile/widgets/custom_buttom_navbar.dart';
+import 'summary_screen.dart'; 
 import 'home_page.dart';
 import 'schedule_page.dart';
 import 'profile_page.dart';
 import 'course_player_page.dart';
 
 class MyCoursesPage extends StatelessWidget {
-  // 1. Tambahkan variabel themeNotifier
   final ValueNotifier<ThemeMode> themeNotifier;
 
-  // 2. Update Constructor
+  // Menambahkan super.key untuk standar widget publik
   const MyCoursesPage({super.key, required this.themeNotifier});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Gunakan warna background dari tema agar berubah saat dark mode
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-
-      // Navigasi Bawah
       bottomNavigationBar: CustomBottomNavbar(
-        currentIndex: 2, // Index My Courses
-        themeNotifier: themeNotifier, // Kirim notifier ke navbar
+        currentIndex: 2, 
+        themeNotifier: themeNotifier,
         onTap: (index) {
-          if (index == 2) return; // Sudah di halaman ini
-
+          if (index == 2) return;
           Widget nextPage;
           if (index == 0) {
             nextPage = HomePage(themeNotifier: themeNotifier);
@@ -33,7 +29,6 @@ class MyCoursesPage extends StatelessWidget {
           } else if (index == 4) {
             nextPage = ProfilePage(themeNotifier: themeNotifier);
           } else {
-            // Default fallback
             nextPage = HomePage(themeNotifier: themeNotifier);
           }
 
@@ -43,8 +38,6 @@ class MyCoursesPage extends StatelessWidget {
           );
         },
       ),
-
-      // ISI KONTEN ASLI ANDA
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
@@ -57,7 +50,6 @@ class MyCoursesPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Banner "Continue Watching"
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -65,7 +57,8 @@ class MyCoursesPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF1565C0).withOpacity(0.3),
+                      // FIX: withOpacity diganti withValues
+                      color: const Color(0xFF1565C0).withValues(alpha: 0.3),
                       blurRadius: 10,
                       offset: const Offset(0, 5),
                     ),
@@ -77,12 +70,10 @@ class MyCoursesPage extends StatelessWidget {
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            // FIX: withOpacity diganti withValues
+                            color: Colors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Text(
@@ -91,20 +82,13 @@ class MyCoursesPage extends StatelessWidget {
                           ),
                         ),
                         const Spacer(),
-                        const Icon(
-                          Icons.play_circle_outline,
-                          color: Colors.white,
-                        ),
+                        const Icon(Icons.play_circle_outline, color: Colors.white),
                       ],
                     ),
                     const SizedBox(height: 15),
                     const Text(
                       "UI/UX Design Masterclass",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 5),
                     const Text(
@@ -114,10 +98,9 @@ class MyCoursesPage extends StatelessWidget {
                     const SizedBox(height: 20),
                     LinearProgressIndicator(
                       value: 0.45,
-                      backgroundColor: Colors.white.withOpacity(0.2),
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                        Colors.white,
-                      ),
+                      // FIX: withOpacity diganti withValues
+                      backgroundColor: Colors.white.withValues(alpha: 0.2),
+                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                       minHeight: 6,
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -128,17 +111,13 @@ class MyCoursesPage extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           foregroundColor: const Color(0xFF1565C0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => const CoursePlayerPage(),
-                            ),
+                            MaterialPageRoute(builder: (context) => const CoursePlayerPage()),
                           );
                         },
                         child: const Text("Continue Learning"),
@@ -149,14 +128,12 @@ class MyCoursesPage extends StatelessWidget {
               ),
 
               const SizedBox(height: 30),
-
               const Text(
                 "Enrolled Courses",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 15),
 
-              // Daftar Kursus
               _buildCourseItem(
                 title: "Python for Data Science",
                 author: "Jose Portilla",
@@ -175,6 +152,28 @@ class MyCoursesPage extends StatelessWidget {
                 progress: 0.30,
                 imageUrl: "https://picsum.photos/102/100",
               ),
+
+              const SizedBox(height: 5),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SummaryScreen()),
+                    );
+                  },
+                  child: const Text(
+                    "Lihat Ringkasan progres",
+                    style: TextStyle(
+                      color: Color(0xFF1565C0),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -182,7 +181,6 @@ class MyCoursesPage extends StatelessWidget {
     );
   }
 
-  // Widget Bantuan (Sama Persis)
   Widget _buildCourseItem({
     required String title,
     required String author,
@@ -198,7 +196,8 @@ class MyCoursesPage extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            // FIX: withOpacity diganti withValues
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),
@@ -208,31 +207,16 @@ class MyCoursesPage extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.network(
-              imageUrl,
-              width: 70,
-              height: 70,
-              fit: BoxFit.cover,
-            ),
+            child: Image.network(imageUrl, width: 70, height: 70, fit: BoxFit.cover),
           ),
           const SizedBox(width: 15),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Colors.black, // Paksa hitam agar terbaca di card putih
-                  ),
-                ),
+                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black)),
                 const SizedBox(height: 4),
-                Text(
-                  author,
-                  style: const TextStyle(color: Colors.grey, fontSize: 13),
-                ),
+                Text(author, style: const TextStyle(color: Colors.grey, fontSize: 13)),
                 const SizedBox(height: 10),
                 Row(
                   children: [
@@ -240,22 +224,13 @@ class MyCoursesPage extends StatelessWidget {
                       child: LinearProgressIndicator(
                         value: progress,
                         backgroundColor: Colors.grey.shade200,
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                          Color(0xFF1565C0),
-                        ),
+                        valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF1565C0)),
                         minHeight: 5,
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                     const SizedBox(width: 10),
-                    Text(
-                      "${(progress * 100).toInt()}%",
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1565C0),
-                      ),
-                    ),
+                    Text("${(progress * 100).toInt()}%", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF1565C0))),
                   ],
                 ),
               ],

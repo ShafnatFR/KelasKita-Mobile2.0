@@ -3,34 +3,106 @@ import 'package:kelaskita_mobile/widgets/custom_buttom_navbar.dart';
 import 'home_page.dart';
 import 'my_courses_page.dart';
 import 'schedule_page.dart';
-import 'settings_screen.dart'; // Import Settings
+import 'settings_screen.dart';
+import 'package:http/http.dart' as http; 
+import 'dart:convert';
 
 class ProfilePage extends StatefulWidget {
-  // 1. Menerima themeNotifier
-  final ValueNotifier<ThemeMode> themeNotifier;
-
-  // 2. Constructor
   const ProfilePage({super.key, required this.themeNotifier});
+
+  final ValueNotifier<ThemeMode> themeNotifier;
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // --- STATE UNTUK KONTEN PROFIL (NADIA) ---
   bool isEditing = false;
+  bool isLoading = false; 
   String name = "Nadia";
   String email = "nadia@gmail.com";
   final nameController = TextEditingController();
   final emailController = TextEditingController();
 
-  // Logika Ganti Foto
+  Future<void> fetchUserData() async {
+    setState(() => isLoading = true);
+    try {
+      final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/users/1'));
+      
+      // FIX: Cek 'mounted' sebelum memproses data setelah await
+      if (!mounted) return;
+
+      if (response.statusCode == 200) {
+
+        debugPrint("Status Code: ${response.statusCode}");
+        
+        final data = json.decode(response.body);
+
+        debugPrint("Data yang diterima: ${response.body}");
+
+        setState(() {
+          name = data['name']; 
+          email = data['email'];
+          nameController.text = name;
+          emailController.text = email;
+        });
+      }
+    } catch (e) {
+      debugPrint("Error Fetch: $e");
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> saveUserData() async {
+
+    debugPrint("Data yang dikirim: name=${nameController.text}, email=${emailController.text}");
+
+    final response = await http.patch(
+      Uri.parse('https://jsonplaceholder.typicode.com/users/1'),
+      body: {'name': nameController.text, 'email': emailController.text},
+    );
+
+    // FIX: Cek 'mounted' sebelum memanggil Snackbar
+    if (!mounted) return;
+
+    if (response.statusCode == 200) {
+      setState(() {
+        name = nameController.text;
+        email = emailController.text;
+        isEditing = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Profil berhasil diperbarui di server!")),
+      );
+    }
+  }
+
+  void _confirmSave() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Konfirmasi"),
+        content: const Text("Apakah Anda yakin ingin menyimpan perubahan profil?"),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Batal")),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              saveUserData();
+            }, 
+            child: const Text("Ya, Simpan")
+          ),
+        ],
+      ),
+    );
+  }
+
   int currentAvatarIndex = 0;
   final List<String> avatarOptions = [
     "https://api.dicebear.com/9.x/avataaars/png?seed=NadiaHijab&top=hijab&clothing=graphicShirt&clothingColor=pink&mouth=smile&skinColor=light",
     "https://api.dicebear.com/9.x/lorelei/png?seed=HappyNadia&mouth=happy&eyes=happy&backgroundColor=b6e3f4",
     "https://avatar.iran.liara.run/public/girl?username=Nadia",
-    "https://avatar.iran.liara.run/public/boy?username=Ali",
   ];
 
   String get currentAvatarUrl => avatarOptions[currentAvatarIndex];
@@ -40,81 +112,46 @@ class _ProfilePageState extends State<ProfilePage> {
       currentAvatarIndex = (currentAvatarIndex + 1) % avatarOptions.length;
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Foto diganti!"),
-        duration: Duration(milliseconds: 500),
-      ),
+      const SnackBar(content: Text("Foto diganti!"), duration: Duration(milliseconds: 500)),
     );
   }
 
   @override
   void initState() {
     super.initState();
-    nameController.text = name;
-    emailController.text = email;
+    fetchUserData();
   }
-  // -----------------------------------------
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Background mengikuti tema
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      
       appBar: AppBar(
         title: const Text("Profile", style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         actions: [
-          // Tombol Settings
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SettingsScreen(
-                    themeNotifier: widget.themeNotifier,
-                  ),
-                ),
-              );
-            },
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsScreen(themeNotifier: widget.themeNotifier))),
           ),
         ],
       ),
-
-      // Navigasi Bawah (Sesuai request Anda)
       bottomNavigationBar: CustomBottomNavbar(
-        currentIndex: 4, // Index Profile
+        currentIndex: 4,
         themeNotifier: widget.themeNotifier,
         onTap: (index) {
           if (index == 4) return;
-
-          Widget nextPage;
-          if (index == 0) {
-            nextPage = HomePage(themeNotifier: widget.themeNotifier);
-          } else if (index == 2) {
-            nextPage = MyCoursesPage(themeNotifier: widget.themeNotifier);
-          } else if (index == 3) {
-            nextPage = SchedulePage(themeNotifier: widget.themeNotifier);
-          } else {
-             nextPage = HomePage(themeNotifier: widget.themeNotifier);
-          }
-
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => nextPage),
-          );
+          Widget nextPage = HomePage(themeNotifier: widget.themeNotifier);
+          if (index == 2) nextPage = MyCoursesPage(themeNotifier: widget.themeNotifier);
+          if (index == 3) nextPage = SchedulePage(themeNotifier: widget.themeNotifier);
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => nextPage));
         },
       ),
-
-      // Isi Halaman (Konten Profil Lengkap)
-      body: SingleChildScrollView(
+      body: isLoading 
+          ? const Center(child: CircularProgressIndicator()) 
+          : SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            const SizedBox(height: 20),
-
-            // Foto Profil dengan Tombol Ganti
             Center(
               child: Stack(
                 alignment: Alignment.bottomRight,
@@ -130,12 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Image.network(
                         currentAvatarUrl,
                         fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return const Center(child: CircularProgressIndicator(strokeWidth: 2));
-                        },
-                        errorBuilder: (context, error, stackTrace) => 
-                           Icon(Icons.person, size: 60, color: Colors.grey[400]),
+                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, size: 60),
                       ),
                     ),
                   ),
@@ -144,20 +176,19 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Material(
                       color: Colors.blue,
                       shape: const CircleBorder(),
-                      elevation: 3,
                       child: InkWell(
-                        customBorder: const CircleBorder(),
                         onTap: isEditing ? _changePhoto : null,
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2),
+                            shape: BoxShape.circle, 
+                            border: Border.all(color: Colors.white, width: 2)
                           ),
+                          // FIX: Ganti withOpacity ke withValues
                           child: Icon(
-                            Icons.camera_alt,
-                            color: isEditing ? Colors.white : Colors.white.withOpacity(0.5),
-                            size: 20,
+                            Icons.camera_alt, 
+                            color: isEditing ? Colors.white : Colors.white.withValues(alpha: 0.7), 
+                            size: 20
                           ),
                         ),
                       ),
@@ -166,73 +197,40 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
             ),
-
-            if (isEditing)
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Text("Klik ikon kamera untuk ganti gaya foto",
-                  style: TextStyle(color: Colors.blue[700], fontSize: 13)),
-              ),
-
             const SizedBox(height: 35),
-
-            // Input Nama
             isEditing
                 ? TextField(
                     controller: nameController,
                     decoration: InputDecoration(
-                      labelText: "Name",
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                      prefixIcon: const Icon(Icons.person),
+                      labelText: "Name", 
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)), 
+                      prefixIcon: const Icon(Icons.person)
                     ),
                   )
-                : Column(
-                    children: [
-                      Text(name, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 5),
-                    ],
-                  ),
-
+                : Text(name, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 15),
-
-            // Input Email
             isEditing
                 ? TextField(
                     controller: emailController,
                     decoration: InputDecoration(
-                      labelText: "Email",
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                      prefixIcon: const Icon(Icons.email),
+                      labelText: "Email", 
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)), 
+                      prefixIcon: const Icon(Icons.email)
                     ),
                   )
                 : Text(email, style: TextStyle(fontSize: 16, color: Colors.grey[600])),
-
             const SizedBox(height: 50),
-
-            // Tombol Save / Edit
             SizedBox(
-              width: double.infinity,
-              height: 55,
+              width: double.infinity, height: 55,
               child: ElevatedButton(
-                onPressed: () {
-                  if (isEditing) {
-                    setState(() {
-                      name = nameController.text;
-                      email = emailController.text;
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Profil berhasil disimpan!")),
-                    );
-                  }
-                  setState(() => isEditing = !isEditing);
-                },
+                onPressed: () => isEditing ? _confirmSave() : setState(() => isEditing = true),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                  backgroundColor: Colors.blue, 
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))
                 ),
                 child: Text(
-                  isEditing ? "Save Changes" : "Edit Profile",
-                  style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                  isEditing ? "Save Changes" : "Edit Profile", 
+                  style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)
                 ),
               ),
             ),
