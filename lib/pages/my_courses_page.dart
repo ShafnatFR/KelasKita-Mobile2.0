@@ -9,19 +9,18 @@ import 'course_player_page.dart';
 class MyCoursesPage extends StatelessWidget {
   final ValueNotifier<ThemeMode> themeNotifier;
 
+  // Menambahkan super.key untuk standar widget publik
   const MyCoursesPage({super.key, required this.themeNotifier});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-
       bottomNavigationBar: CustomBottomNavbar(
         currentIndex: 2, 
         themeNotifier: themeNotifier,
         onTap: (index) {
           if (index == 2) return;
-
           Widget nextPage;
           if (index == 0) {
             nextPage = HomePage(themeNotifier: themeNotifier);
@@ -39,7 +38,6 @@ class MyCoursesPage extends StatelessWidget {
           );
         },
       ),
-
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
@@ -52,7 +50,6 @@ class MyCoursesPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Banner "Continue Watching"
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -60,7 +57,8 @@ class MyCoursesPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF1565C0).withOpacity(0.3),
+                      // FIX: withOpacity diganti withValues
+                      color: const Color(0xFF1565C0).withValues(alpha: 0.3),
                       blurRadius: 10,
                       offset: const Offset(0, 5),
                     ),
@@ -74,7 +72,8 @@ class MyCoursesPage extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            // FIX: withOpacity diganti withValues
+                            color: Colors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Text(
@@ -99,7 +98,8 @@ class MyCoursesPage extends StatelessWidget {
                     const SizedBox(height: 20),
                     LinearProgressIndicator(
                       value: 0.45,
-                      backgroundColor: Colors.white.withOpacity(0.2),
+                      // FIX: withOpacity diganti withValues
+                      backgroundColor: Colors.white.withValues(alpha: 0.2),
                       valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                       minHeight: 6,
                       borderRadius: BorderRadius.circular(10),
@@ -128,14 +128,12 @@ class MyCoursesPage extends StatelessWidget {
               ),
 
               const SizedBox(height: 30),
-
               const Text(
                 "Enrolled Courses",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 15),
 
-              // Daftar Kursus (Progres Kelas)
               _buildCourseItem(
                 title: "Python for Data Science",
                 author: "Jose Portilla",
@@ -155,15 +153,14 @@ class MyCoursesPage extends StatelessWidget {
                 imageUrl: "https://picsum.photos/102/100",
               ),
 
-              // --- POSISI BARU: Sebelah kanan di bawah daftar kelas ---
               const SizedBox(height: 5),
               Align(
-                alignment: Alignment.centerRight, // Menjajajakan widget ke kanan
+                alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SummaryScreen()),
+                      MaterialPageRoute(builder: (context) => const SummaryScreen()),
                     );
                   },
                   child: const Text(
@@ -199,7 +196,8 @@ class MyCoursesPage extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            // FIX: withOpacity diganti withValues
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),

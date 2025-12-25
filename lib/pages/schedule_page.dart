@@ -5,24 +5,24 @@ import 'my_courses_page.dart';
 import 'profile_page.dart';
 
 class SchedulePage extends StatelessWidget {
-  // 1. Tambahkan variabel themeNotifier
+  // 1. Variabel themeNotifier untuk sinkronisasi Dark Mode
   final ValueNotifier<ThemeMode> themeNotifier;
 
-  // 2. Update Constructor
+  // 2. Constructor dengan named key parameter
   const SchedulePage({super.key, required this.themeNotifier});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Gunakan warna background dari tema agar berubah saat dark mode
+      // Gunakan warna background dari tema agar adaptif
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
       // Navigasi Bawah
       bottomNavigationBar: CustomBottomNavbar(
         currentIndex: 3, 
-        themeNotifier: themeNotifier, // Kirim notifier ke navbar
+        themeNotifier: themeNotifier,
         onTap: (index) {
-          if (index == 3) return; // Sudah di halaman ini
+          if (index == 3) return; 
 
           Widget nextPage;
           if (index == 0) {
@@ -32,7 +32,6 @@ class SchedulePage extends StatelessWidget {
           } else if (index == 4) {
             nextPage = ProfilePage(themeNotifier: themeNotifier);
           } else {
-            // Default fallback
             nextPage = HomePage(themeNotifier: themeNotifier);
           }
 
@@ -43,7 +42,6 @@ class SchedulePage extends StatelessWidget {
         },
       ),
 
-      // ISI KONTEN ASLI ANDA
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
@@ -100,7 +98,6 @@ class SchedulePage extends StatelessWidget {
     );
   }
 
-  // Widget Bantuan (Sama Persis)
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -168,7 +165,8 @@ class SchedulePage extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              // PERBAIKAN: Mengganti withOpacity menjadi withValues untuk menghilangkan peringatan
+              color: Colors.black.withValues(alpha: 0.03),
               blurRadius: 5,
               offset: const Offset(0, 2),
             ),
