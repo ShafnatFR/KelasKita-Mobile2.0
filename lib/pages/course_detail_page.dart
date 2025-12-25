@@ -9,7 +9,7 @@ class CourseDetailPage extends StatelessWidget {
   final int students;
   final int price;
   final String description;
-
+// comitted change
   const CourseDetailPage({
     super.key,
     required this.title,
