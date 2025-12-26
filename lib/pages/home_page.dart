@@ -5,7 +5,9 @@ import 'my_courses_page.dart';
 import 'schedule_page.dart';
 import 'profile_page.dart';
 import 'course_detail_page.dart';
-import 'settings_screen.dart'; // Import Settings
+import 'settings_screen.dart';
+import 'popular_courses_page.dart';
+import 'search_page.dart';
 
 class HomePage extends StatelessWidget {
   // Variabel untuk mengontrol tema
@@ -91,44 +93,56 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 20),
 
               // ===================== SEARCH BAR & SETTINGS =====================
-              Container(
-                height: 50,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF1F4F9), // Warna search bar
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.search, color: Colors.grey),
-                    const SizedBox(width: 10),
-                    const Expanded(
-                      child: Text(
-                        "Search for courses...",
-                        style: TextStyle(color: Colors.grey),
+              // ===================== SEARCH BAR & SETTINGS =====================
+            Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => SearchPage(themeNotifier: themeNotifier),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      height: 50,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F4F9),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        children: const [
+                          Icon(Icons.search, color: Colors.grey),
+                          SizedBox(width: 10),
+                          Text(
+                            "Search for courses...",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
                       ),
                     ),
-                    
-                    // --- PERBAIKAN TOMBOL SETTINGS ---
-                    // Menggunakan IconButton agar bisa diklik
-                    IconButton(
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      icon: const Icon(Icons.settings_outlined, color: Colors.grey),
-                      onPressed: () {
-                         // Navigasi ke SettingsScreen membawa themeNotifier
-                         Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SettingsScreen(themeNotifier: themeNotifier),
-                          ),
-                        );
-                      },
-                    ),
-                    // --------------------------------
-                  ],
+                  ),
                 ),
-              ),
+
+                const SizedBox(width: 10),
+
+                IconButton(
+                  icon: const Icon(Icons.settings_outlined, color: Colors.grey),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => SettingsScreen(themeNotifier: themeNotifier),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+
 
               const SizedBox(height: 20),
 
@@ -249,14 +263,37 @@ class HomePage extends StatelessWidget {
               // ===================== POPULAR COURSES =====================
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text(
-                    "Popular Courses",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                children: [
+                  const Text(
+                    "Categories",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  Text("See All", style: TextStyle(color: Colors.grey)),
+
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => PopularCoursesPage(
+                            themeNotifier: themeNotifier,
+                          ),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      "See All",
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
                 ],
               ),
+
 
               const SizedBox(height: 12),
 
@@ -320,6 +357,7 @@ class HomePage extends StatelessWidget {
                         rating: 4.8,
                         students: 18200,
                         price: "\$18.99",
+                   
                       ),
                     ),
                   ],
