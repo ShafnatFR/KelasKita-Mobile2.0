@@ -130,7 +130,7 @@ Widget build(BuildContext context) {
         ),
       );
     }
-    
+    // FUNCTION UNTUK MENGHITUNG TOTAL HARGA
     int _calculateTotalPrice() {
       int total = 0;
       for (var item in CartPage.cartItems) {

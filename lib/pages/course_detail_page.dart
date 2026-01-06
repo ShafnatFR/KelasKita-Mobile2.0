@@ -172,5 +172,5 @@ class CourseDetailPage extends StatelessWidget {
     );
   }
 }
-
+// ================= HTTP 2 =================
 Future<void> addToCartHttp() async {}

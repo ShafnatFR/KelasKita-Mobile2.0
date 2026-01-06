@@ -131,7 +131,7 @@ class TransactionPage extends StatelessWidget {
       ),
     );
   }
-
+// ROW UNTUK RINGKASAN HARGA
   Widget _row(String title, int value, {bool bold = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),

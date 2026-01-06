@@ -359,7 +359,7 @@ class HomePage extends StatelessWidget {
                         rating: 4.8,
                         students: 18200,
                         price: "\$18.99",
-                   
+                   //
                       ),
                     ),
                   ],
