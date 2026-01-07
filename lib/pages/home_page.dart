@@ -8,6 +8,8 @@ import 'course_detail_page.dart';
 import 'settings_screen.dart';
 import 'popular_courses_page.dart';
 import 'search_page.dart';
+import 'CartPage.dart';
+import 'transaction_page.dart';
 
 class HomePage extends StatelessWidget {
   // Variabel untuk mengontrol tema
